@@ -24,7 +24,7 @@ mixin CustomDropdownListFilter {
 }
 
 const _defaultBorderRadius = BorderRadius.all(
-  Radius.circular(12),
+  Radius.circular(4),
 );
 
 final Border _defaultErrorBorder = Border.all(
