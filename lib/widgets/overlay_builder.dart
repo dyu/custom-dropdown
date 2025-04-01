@@ -61,8 +61,14 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
 class OverlayPortalController extends ValueNotifier<bool> {
   OverlayPortalController(super.value);
   
-  void toggle() {
+  void toggle([_]) {
     super.value = !super.value;
+    notifyListeners();
+  }
+  
+  void update(bool value) {
+    if (value == super.value) return;
+    super.value = value;
     notifyListeners();
   }
 }
