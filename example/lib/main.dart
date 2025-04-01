@@ -80,6 +80,8 @@ class _HomeState extends State<Home> {
               children: [
                 const SimpleDropdown(),
                 const SizedBox(height: 16),
+                const SimpleInitializedDropdown(),
+                const SizedBox(height: 16),
                 const SearchDropdown(),
                 const SizedBox(height: 16),
                 const SearchRequestDropdown(),

@@ -18,10 +18,25 @@ class SimpleDropdown extends StatelessWidget {
     return CustomDropdown<String>(
       hintText: 'Select job role',
       items: _list,
+      onChanged: (value) {
+        log('SimpleDropdown onChanged value: $value');
+      },
+    );
+  }
+}
+
+class SimpleInitializedDropdown extends StatelessWidget {
+  const SimpleInitializedDropdown({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDropdown<String>(
+      hintText: 'Select job role',
+      items: _list,
       initialItem: _list[0],
       excludeSelected: false,
       onChanged: (value) {
-        log('SimpleDropdown onChanged value: $value');
+        log('SimpleInitializedDropdown onChanged value: $value');
       },
     );
   }
