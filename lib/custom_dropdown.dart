@@ -755,7 +755,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           );
           return !customErrorPadding ? w : Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
             children: [
               w,
