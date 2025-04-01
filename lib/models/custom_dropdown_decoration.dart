@@ -55,6 +55,8 @@ class CustomDropdownDecoration {
 
   /// The style to use for the string returning from [validator].
   final TextStyle? errorStyle;
+  
+  final EdgeInsetsGeometry? errorPadding;
 
   /// The style to use for the [CustomDropdown] list item text.
   final TextStyle? listItemStyle;
@@ -86,6 +88,7 @@ class CustomDropdownDecoration {
     this.headerStyle,
     this.noResultFoundStyle,
     this.errorStyle,
+    this.errorPadding,
     this.listItemStyle,
     this.overlayScrollbarDecoration,
     this.searchFieldDecoration,

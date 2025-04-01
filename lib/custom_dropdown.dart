@@ -626,10 +626,12 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
         },
         builder: (formFieldState) {
           _formFieldState = formFieldState;
-          return InputDecorator(
+          final customErrorPadding =
+              formFieldState.hasError && null != decoration?.errorPadding;
+          final w = InputDecorator(
             decoration: InputDecoration(
               errorStyle: decoration?.errorStyle ?? _defaultErrorStyle,
-              errorText: formFieldState.errorText,
+              errorText: customErrorPadding ? null : formFieldState.errorText,
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
             ),
@@ -750,6 +752,21 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 );
               },
             ),
+          );
+          return !customErrorPadding ? w : Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              w,
+              Padding(
+                padding: decoration!.errorPadding!,
+                child: Text(
+                  formFieldState.errorText!,
+                  style: decoration.errorStyle ?? _defaultErrorStyle,
+                ),
+              ),
+            ],
           );
         },
       ),

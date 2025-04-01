@@ -51,6 +51,60 @@ class ValidationDropdown extends StatelessWidget {
   }
 }
 
+class ValidationPaddedErrorDropdown extends StatelessWidget {
+  ValidationPaddedErrorDropdown({Key? key}) : super(key: key);
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomDropdown<Job>(
+            hintText: 'Select job role',
+            items: jobItems,
+            excludeSelected: false,
+            onChanged: (value) {
+              log('ValidationDropdown onChanged value: $value');
+            },
+            validator: (value) {
+              if (value == null) {
+                return "Must not be null";
+              }
+              return null;
+            },
+            decoration: const CustomDropdownDecoration(
+              errorPadding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+              )
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                }
+              },
+              child: const Text(
+                'Submit',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class MultiSelectValidationDropdown extends StatelessWidget {
   MultiSelectValidationDropdown({Key? key}) : super(key: key);
 

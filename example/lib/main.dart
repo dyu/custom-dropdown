@@ -92,6 +92,8 @@ class _HomeState extends State<Home> {
                 const SizedBox(height: 16),
                 ValidationDropdown(),
                 const SizedBox(height: 16),
+                ValidationPaddedErrorDropdown(),
+                const SizedBox(height: 16),
                 const ControllerValidationDropdown(),
               ],
             ),
