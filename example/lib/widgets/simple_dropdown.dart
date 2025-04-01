@@ -23,16 +23,23 @@ final _dropdownDecoration = CustomDropdownDecoration(
   closedErrorBorderRadius: BorderRadius.circular(4),
   // expandedBorder: Border.all(width: 0.5),
   expandedBorderRadius: BorderRadius.circular(4),
+  overlayBottomOffset: 48,
 );
 
 class BorderedDropdown extends StatelessWidget {
-  const BorderedDropdown({Key? key}) : super(key: key);
+  const BorderedDropdown({
+    super.key,
+    this.excludeSelected = false,
+  });
+  final bool excludeSelected;
 
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<String>(
       hintText: 'Select job role',
       items: _list,
+      hideSelectedFieldWhenExpanded: true,
+      excludeSelected: excludeSelected,
       decoration: _dropdownDecoration,
       closedHeaderPadding: const EdgeInsets.only(
         top: 12,

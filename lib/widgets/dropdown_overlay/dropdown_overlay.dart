@@ -253,7 +253,11 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
       final render1 = key1.currentContext?.findRenderObject() as RenderBox;
       final render2 = key2.currentContext?.findRenderObject() as RenderBox;
       final screenHeight = MediaQuery.of(context).size.height;
-      double y = render1.localToGlobal(Offset.zero).dy;
+      var y = render1.localToGlobal(Offset.zero).dy;
+      var offset = widget.decoration?.overlayBottomOffset ?? 0;
+      if (offset != 0) {
+        y += (offset * 0.5);
+      }
       if (screenHeight - y < render2.size.height) {
         displayOverlayBottom = false;
         setState(() {});
@@ -315,7 +319,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
     final onSearch = widget.searchType != null;
 
     // overlay offset
-    final overlayOffset = Offset(-12, displayOverlayBottom ? 0 : 64);
+    final overlayOffset = Offset(-12, !displayOverlayBottom ? 64 : (decoration?.overlayBottomOffset ?? 0));
 
     // list padding
     final listPadding =

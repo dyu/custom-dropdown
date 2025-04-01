@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
             ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                const BorderedDropdown(),
+                const BorderedDropdown(excludeSelected: true),
                 const SizedBox(height: 16),
                 const SimpleDropdown(),
                 const SizedBox(height: 16),
@@ -91,6 +91,8 @@ class _HomeState extends State<Home> {
                 const DecoratedDropdown(),
                 const SizedBox(height: 16),
                 ValidationDropdown(),
+                const SizedBox(height: 16),
+                const BorderedDropdown(excludeSelected: false),
                 const SizedBox(height: 16),
                 ValidationPaddedErrorDropdown(),
                 const SizedBox(height: 16),
