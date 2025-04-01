@@ -102,8 +102,14 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
   
   @override
   void dispose() {
-    overlayEntry?.dispose();
     widget.overlayPortalController?.removeListener(onToggle);
+    if (overlayEntry != null) {
+      try {
+        overlayEntry!.dispose();
+      } catch (_) {
+        // noop
+      }      
+    }
     super.dispose();
   }
   
