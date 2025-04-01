@@ -622,7 +622,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           }
           return widget.validator == null
               ? null
-              : widget.validator!(val == null ? null : val[0]);
+              : widget.validator!(val == null || val.isEmpty ? null : val[0]);
         },
         builder: (formFieldState) {
           _formFieldState = formFieldState;
