@@ -508,11 +508,14 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   final layerLink = LayerLink();
   late SingleSelectController<T?> selectedItemNotifier;
   late MultiSelectController<T> selectedItemsNotifier;
-  FormFieldState<(T?, List<T>)>? _formFieldState;
+  FormFieldState<List<T>>? _formFieldState;
+  // FormFieldState<(T?, List<T>)>? _formFieldState;
 
   void _selectedItemListener() {
-    widget.onChanged?.call(selectedItemNotifier.value);
-    _formFieldState?.didChange((selectedItemNotifier.value, []));
+    final value = selectedItemNotifier.value;
+    widget.onChanged?.call(value);
+    // _formFieldState?.didChange((value, []));
+    _formFieldState?.didChange(value == null ? const [] : [value]);
     if (widget.validateOnChange) {
       _formFieldState?.validate();
     }
@@ -520,7 +523,8 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
   void _selectedItemsListener() {
     widget.onListChanged?.call(selectedItemsNotifier.value);
-    _formFieldState?.didChange((null, selectedItemsNotifier.value));
+    // _formFieldState?.didChange((null, selectedItemsNotifier.value));
+    _formFieldState?.didChange(selectedItemsNotifier.value);
     if (widget.validateOnChange) {
       _formFieldState?.validate();
     }
@@ -593,12 +597,15 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     final decoration = widget.decoration;
     final disabledDecoration = widget.disabledDecoration;
     final safeHintText = widget.hintText ?? 'Select value';
-
+    
+    final value = selectedItemNotifier.value;
     return IgnorePointer(
       ignoring: !widget.enabled,
-      child: FormField<(T?, List<T>)>(
-        initialValue: (selectedItemNotifier.value, selectedItemsNotifier.value),
+      child: FormField<List<T>>(
+        // initialValue: (selectedItemNotifier.value, selectedItemsNotifier.value),
+        initialValue: value != null ? [value] : selectedItemsNotifier.value,
         validator: (val) {
+          /*
           if (widget._dropdownType == _DropdownType.singleSelect &&
               widget.validator != null) {
             return widget.validator!(val?.$1);
@@ -607,7 +614,15 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               widget.listValidator != null) {
             return widget.listValidator!(val?.$2 ?? []);
           }
-          return null;
+          */
+          if (widget._dropdownType == _DropdownType.multipleSelect) {
+            return widget.listValidator == null
+                ? null
+                : widget.listValidator!(val ?? const []);
+          }
+          return widget.validator == null
+              ? null
+              : widget.validator!(val == null ? null : val[0]);
         },
         builder: (formFieldState) {
           _formFieldState = formFieldState;
@@ -624,6 +639,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               overlay: (size, hideCallback) {
                 return _DropdownOverlay<T>(
                   onItemSelect: (T value) {
+                    /*
                     switch (widget._dropdownType) {
                       case _DropdownType.singleSelect:
                         selectedItemNotifier.value = value;
@@ -636,6 +652,18 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                         }
                         selectedItemsNotifier.value = currentVal;
                     }
+                    */
+                    if (widget._dropdownType != _DropdownType.multipleSelect) {
+                      selectedItemNotifier.value = value;
+                      return;
+                    }
+                    final currentVal = selectedItemsNotifier.value.toList();
+                    if (currentVal.contains(value)) {
+                      currentVal.remove(value);
+                    } else {
+                      currentVal.add(value);
+                    }
+                    selectedItemsNotifier.value = currentVal;
                   },
                   noResultFoundText:
                       widget.noResultFoundText ?? 'No result found.',

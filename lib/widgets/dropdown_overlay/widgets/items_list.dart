@@ -36,11 +36,16 @@ class _ItemsList<T> extends StatelessWidget {
         padding: itemsListPadding,
         itemCount: items.length,
         itemBuilder: (_, index) {
+          /*
           final selected = switch (dropdownType) {
             _DropdownType.singleSelect =>
               !excludeSelected && selectedItem == items[index],
             _DropdownType.multipleSelect => selectedItems.contains(items[index])
           };
+          */
+          final selected = dropdownType == _DropdownType.multipleSelect
+              ? selectedItems.contains(items[index])
+              : !excludeSelected && selectedItem == items[index];
           return Material(
             color: Colors.transparent,
             child: InkWell(

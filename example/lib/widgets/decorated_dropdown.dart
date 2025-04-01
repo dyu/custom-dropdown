@@ -1,8 +1,14 @@
-import 'dart:developer';
+// import 'dart:developer';
 
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:animated_custom_dropdown_example/models/job.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart'
+    show
+        CustomDropdown,
+        CustomDropdownDecoration,
+        ListItemDecoration,
+        SearchFieldDecoration;
+import 'package:animated_custom_dropdown_example/models/job.dart'
+    show Job, jobItems;
+import 'package:flutter/foundation.dart' show Key, kDebugMode;
 import 'package:flutter/material.dart';
 
 class DecoratedDropdown extends StatelessWidget {
@@ -19,7 +25,7 @@ class DecoratedDropdown extends StatelessWidget {
       hideSelectedFieldWhenExpanded: true,
       closedHeaderPadding: const EdgeInsets.all(20),
       onChanged: (value) {
-        log('DecoratedDropdown onChanged value: $value');
+        if (kDebugMode) print('DecoratedDropdown onChanged value: $value');
       },
       headerBuilder: (context, selectedItem, enabled) {
         return Text(
@@ -93,6 +99,60 @@ class DecoratedDropdown extends StatelessWidget {
   }
 }
 
+class CheckboxRow extends StatefulWidget {
+  const CheckboxRow({
+    super.key,
+    required this.item,
+    required this.isSelected,
+    required this.onItemSelect,
+  });
+  final Job item;
+  final bool isSelected;
+  final void Function() onItemSelect;
+
+  @override
+  State<CheckboxRow> createState() => _CheckboxRowState();
+}
+
+class _CheckboxRowState extends State<CheckboxRow> {
+  var selected = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    selected = widget.isSelected;
+  }
+  void onChanged(bool? selected) {
+    setState(() {
+      this.selected = selected == true;
+      widget.onItemSelect();
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          widget.item.toString(),
+          style: const TextStyle(color: Colors.green, fontSize: 16),
+        ),
+        Checkbox(
+          value: selected,
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+}
+
+// const BG_COLOR = Colors.black;
+// const FG_COLOR = Colors.yellow;
+// final HINT_COLOR = Colors.yellow[200];
+final BG_COLOR = Colors.blue[50];
+const FG_COLOR = Colors.black12;
+final HINT_COLOR = Colors.blue[200];
+
 class MultiSelectDecoratedDropdown extends StatelessWidget {
   const MultiSelectDecoratedDropdown({Key? key}) : super(key: key);
 
@@ -104,10 +164,11 @@ class MultiSelectDecoratedDropdown extends StatelessWidget {
       searchHintText: 'Search job role',
       closedHeaderPadding: const EdgeInsets.all(20),
       onListChanged: (value) {
-        log('MultiSelectDecoratedDropdown onChanged value: $value');
+        if (kDebugMode) print('MultiSelectDecoratedDropdown onChanged value: $value');
       },
       maxlines: 2,
       listItemBuilder: (context, item, isSelected, onItemSelect) {
+        /*
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -115,37 +176,43 @@ class MultiSelectDecoratedDropdown extends StatelessWidget {
               item.toString(),
               style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
-            CupertinoCheckbox(
+            Checkbox(
               value: isSelected,
               onChanged: (_) => onItemSelect(),
             ),
           ],
         );
+        */
+        return CheckboxRow(
+          item: item,
+          isSelected: isSelected,
+          onItemSelect: onItemSelect,
+        );
       },
       decoration: CustomDropdownDecoration(
-        closedFillColor: Colors.black,
-        expandedFillColor: Colors.black,
+        closedFillColor: BG_COLOR,
+        expandedFillColor: BG_COLOR,
         hintStyle: TextStyle(
-          color: Colors.yellow[200],
+          color: HINT_COLOR,
           fontSize: 16,
         ),
         headerStyle: const TextStyle(
-          color: Colors.yellow,
+          color: FG_COLOR,
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
         noResultFoundStyle: const TextStyle(
-          color: Colors.yellow,
+          color: FG_COLOR,
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.person, color: Colors.yellow),
+        prefixIcon: const Icon(Icons.person, color: FG_COLOR),
         closedSuffixIcon: const Icon(
           Icons.keyboard_arrow_down,
-          color: Colors.yellow,
+          color: FG_COLOR,
         ),
         expandedSuffixIcon: const Icon(
           Icons.keyboard_arrow_up,
-          color: Colors.yellow,
+          color: FG_COLOR,
         ),
         closedShadow: [
           const BoxShadow(

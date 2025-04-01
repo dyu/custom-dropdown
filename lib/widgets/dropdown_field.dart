@@ -114,13 +114,29 @@ class _DropDownFieldState<T> extends State<_DropDownField<T>> {
     switch (widget.dropdownType) {
       case _DropdownType.singleSelect:
         selectedItem = widget.selectedItemNotifier.value;
+        break;
       case _DropdownType.multipleSelect:
         selectedItems = widget.selectedItemsNotifier.value;
+        break;
+      default:
+        break;
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final Widget expandedChild;
+    switch (widget.dropdownType) {
+      case _DropdownType.multipleSelect:
+        expandedChild = selectedItems.isNotEmpty
+            ? headerListBuilder(context)
+            : hintBuilder(context);
+        break;
+      default:
+        expandedChild = selectedItem != null
+            ? headerBuilder(context)
+            : hintBuilder(context);
+    }
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -141,6 +157,7 @@ class _DropDownFieldState<T> extends State<_DropDownField<T>> {
               const SizedBox(width: 12),
             ],
             Expanded(
+              /*
               child: switch (widget.dropdownType) {
                 _DropdownType.singleSelect => selectedItem != null
                     ? headerBuilder(context)
@@ -149,6 +166,8 @@ class _DropDownFieldState<T> extends State<_DropDownField<T>> {
                     ? headerListBuilder(context)
                     : hintBuilder(context),
               },
+              */
+              child: expandedChild,
             ),
             const SizedBox(width: 12),
             widget.suffixIcon ??

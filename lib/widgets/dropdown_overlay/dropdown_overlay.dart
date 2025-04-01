@@ -12,6 +12,54 @@ const _defaultOverlayShadowOffset = Offset(0, 6);
 const _defaultListItemPadding =
     EdgeInsets.symmetric(vertical: 12, horizontal: 16);
 
+class StatefulCheckbox extends StatefulWidget {
+  const StatefulCheckbox({
+    super.key,
+    required this.isSelected,
+    required this.onItemSelect,
+    this.decoration,
+  });
+  final bool isSelected;
+  final void Function() onItemSelect;
+  final CustomDropdownDecoration? decoration;
+
+  @override
+  State<StatefulCheckbox> createState() => _StatefulCheckboxState();
+}
+
+class _StatefulCheckboxState extends State<StatefulCheckbox> {
+  var selected = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    selected = widget.isSelected;
+  }
+  void onChanged(bool? selected) {
+    setState(() {
+      this.selected = selected == true;
+      widget.onItemSelect();
+    });
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+      onChanged: onChanged,
+      value: selected,
+      activeColor:
+          widget.decoration?.listItemDecoration?.selectedIconColor,
+      side: widget.decoration?.listItemDecoration?.selectedIconBorder,
+      shape: widget.decoration?.listItemDecoration?.selectedIconShape,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: const VisualDensity(
+        horizontal: VisualDensity.minimumDensity,
+        vertical: VisualDensity.minimumDensity,
+      ),
+    );
+  }
+}
+
 class _DropdownOverlay<T> extends StatefulWidget {
   final List<T> items;
   final ScrollController? itemsScrollCtrl;
@@ -134,6 +182,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
         if (widget.dropdownType == _DropdownType.multipleSelect)
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 12.0),
+            /*
             child: Checkbox(
               onChanged: (_) => onItemSelect(),
               value: isSelected,
@@ -146,6 +195,12 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                 horizontal: VisualDensity.minimumDensity,
                 vertical: VisualDensity.minimumDensity,
               ),
+            ),
+            */
+            child: StatefulCheckbox(
+              isSelected: isSelected,
+              onItemSelect: onItemSelect,
+              decoration: widget.decoration,
             ),
           ),
       ],
@@ -287,6 +342,15 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
             ? noResultFoundBuilder(context)
             : const SizedBox(height: 12);
 
+    final Widget expanededChild;
+    if (widget.dropdownType == _DropdownType.multipleSelect) {
+      expanededChild = selectedItems.isNotEmpty
+          ? headerListBuilder(context)
+          : hintBuilder(context);
+    } else {
+      expanededChild =
+          selectedItem != null ? headerBuilder(context) : hintBuilder(context);
+    }
     final child = Stack(
       children: [
         Positioned(
@@ -371,6 +435,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                           const SizedBox(width: 12),
                                         ],
                                         Expanded(
+                                          /*
                                           child: switch (widget.dropdownType) {
                                             _DropdownType.singleSelect =>
                                               selectedItem != null
@@ -381,6 +446,8 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                                   ? headerListBuilder(context)
                                                   : hintBuilder(context),
                                           },
+                                          */
+                                          child: expanededChild,
                                         ),
                                         const SizedBox(width: 12),
                                         decoration?.expandedSuffixIcon ??
