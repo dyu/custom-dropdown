@@ -309,6 +309,15 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
       setState(() => displayOverly = false);
     }
   }
+  
+  Widget resolveHeader(BuildContext context) {
+    if (widget.dropdownType == _DropdownType.multipleSelect) {
+      return selectedItems.isNotEmpty
+          ? headerListBuilder(context)
+          : hintBuilder(context);
+    }
+    return selectedItem != null ? headerBuilder(context) : hintBuilder(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -346,15 +355,6 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
             ? noResultFoundBuilder(context)
             : const SizedBox(height: 12);
 
-    final Widget expanededChild;
-    if (widget.dropdownType == _DropdownType.multipleSelect) {
-      expanededChild = selectedItems.isNotEmpty
-          ? headerListBuilder(context)
-          : hintBuilder(context);
-    } else {
-      expanededChild =
-          selectedItem != null ? headerBuilder(context) : hintBuilder(context);
-    }
     final child = Stack(
       children: [
         Positioned(
@@ -451,7 +451,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                                   : hintBuilder(context),
                                           },
                                           */
-                                          child: expanededChild,
+                                          child: resolveHeader(context),
                                         ),
                                         const SizedBox(width: 12),
                                         decoration?.expandedSuffixIcon ??
