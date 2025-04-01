@@ -145,8 +145,10 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
   void addToOverlay(OverlayEntry entry) => Overlay.of(context).insert(entry);
 
   void hideOverlay() {
-    overlayEntry!.remove();
-    overlayEntry = null;
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
+    }
     if (widget.visibility != null) widget.visibility!(false);
   }
 
