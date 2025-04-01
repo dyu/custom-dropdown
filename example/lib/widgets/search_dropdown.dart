@@ -29,6 +29,15 @@ class _SearchDropdownState extends State<SearchDropdown> {
       items: _list,
       initialItem: selectedItem,
       overlayHeight: 342,
+      decoration: const CustomDropdownDecoration(
+        searchFieldDecoration: SearchFieldDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black87,
+            ),
+          ),
+        )
+      ),
       onChanged: (value) {
         log('SearchDropdown onChanged value: $value');
         setState(() {
