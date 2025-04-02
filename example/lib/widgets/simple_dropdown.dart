@@ -323,13 +323,13 @@ class _FocusableDropdownInputState<T> extends State<FocusableDropdownInput<T>> {
         ),
         if (errorText != null && errorText.isNotEmpty)
           Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 4,
               horizontal: 8,
             ),
             child: Text(
               errorText,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.red,
               ),
             ),
