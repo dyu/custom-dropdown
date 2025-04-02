@@ -63,13 +63,9 @@ class OverlayPortalController extends ValueNotifier<bool> {
   
   void toggle([_]) {
     super.value = !super.value;
-    notifyListeners();
   }
-  
   void update(bool value) {
-    if (value == super.value) return;
     super.value = value;
-    notifyListeners();
   }
 }
 
