@@ -1,3 +1,5 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart'
+    show OverlayPortalController;
 import 'package:animated_custom_dropdown_example/widgets/controller_validation_dropdown.dart';
 import 'package:animated_custom_dropdown_example/widgets/multi_select_controller_dropdown.dart';
 import 'package:animated_custom_dropdown_example/widgets/decorated_dropdown.dart';
@@ -41,6 +43,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final borderedWithController = BorderedDropdown(
+    overlayController: OverlayPortalController(false),
+  );
+  final toggleFocus = Toggle(false);
+  final borderedWithFocus = BorderedDropdown(
+    overlayController: OverlayPortalController(false),
+    visibility: Toggle(false),
+  );
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -80,6 +92,8 @@ class _HomeState extends State<Home> {
               children: [
                 const BorderedDropdown(excludeSelected: true),
                 const SizedBox(height: 16),
+                borderedWithController,
+                const SizedBox(height: 16),
                 const SimpleDropdown(),
                 const SizedBox(height: 16),
                 const SimpleInitializedDropdown(),
@@ -87,6 +101,32 @@ class _HomeState extends State<Home> {
                 const SearchDropdown(),
                 const SizedBox(height: 16),
                 const SearchRequestDropdown(),
+                const SizedBox(height: 16),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        autocorrect: false,
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Title',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Focus(
+                        onFocusChange: toggleFocus.update,
+                        child: FocusedDropdownInput(
+                          dropdown: borderedWithFocus,
+                          toggleFocus: toggleFocus,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 16),
                 const DecoratedDropdown(),
                 const SizedBox(height: 16),
@@ -97,6 +137,7 @@ class _HomeState extends State<Home> {
                 ValidationPaddedErrorDropdown(),
                 const SizedBox(height: 16),
                 const ControllerValidationDropdown(),
+                const SizedBox(height: 16),
               ],
             ),
             ListView(

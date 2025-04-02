@@ -99,11 +99,7 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
   @override
   void initState() {
     super.initState();
-    final overlayPortalController = widget.overlayPortalController;
-    if (overlayPortalController != null) {
-      overlayPortalController.addListener(onToggle);
-      if (overlayPortalController.value) showOverlay();
-    }
+    widget.overlayPortalController?.addListener(onToggle);
   }
   
   @override
@@ -114,20 +110,22 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
         overlayEntry!.dispose();
       } catch (_) {
         // noop
-      }      
+      }
+      overlayEntry = null;
     }
     super.dispose();
   }
   
   void onToggle() {
-    if (true == widget.overlayPortalController?.value) {
-      showOverlay();
-    } else {
+    if (!widget.overlayPortalController!.value) {
       hideOverlay();
+    } else if (overlayEntry == null) {
+      showOverlay();
     }
   }
   
   void showOverlay() {
+    // if (kDebugMode) print('Showing overlay');
     overlayEntry = OverlayEntry(
       builder: (_) {
         if (mounted) {
@@ -145,6 +143,7 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
   void addToOverlay(OverlayEntry entry) => Overlay.of(context).insert(entry);
 
   void hideOverlay() {
+    // if (kDebugMode) print('Hiding overlay');
     if (overlayEntry != null) {
       overlayEntry!.remove();
       overlayEntry = null;

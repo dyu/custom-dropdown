@@ -12,6 +12,8 @@ const _defaultOverlayShadowOffset = Offset(0, 6);
 const _defaultListItemPadding =
     EdgeInsets.symmetric(vertical: 12, horizontal: 16);
 
+void _noop() {}
+
 class StatefulCheckbox extends StatefulWidget {
   const StatefulCheckbox({
     super.key,
@@ -260,7 +262,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
       }
       if (screenHeight - y < render2.size.height) {
         displayOverlayBottom = false;
-        setState(() {});
+        setState(_noop);
       }
     });
 
@@ -327,8 +329,15 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
     // search availability check
     final onSearch = widget.searchType != null;
 
+    final double yOffset;
+    if (displayOverlayBottom) {
+      yOffset = decoration == null ? 0 : decoration.overlayBottomOffset;
+    } else {
+      yOffset = decoration == null ? 64 : 64 + decoration.overlayTopOffset;
+    }
+    
     // overlay offset
-    final overlayOffset = Offset(-12, !displayOverlayBottom ? 64 : (decoration?.overlayBottomOffset ?? 0));
+    final overlayOffset = Offset(-12, yOffset);
 
     // list padding
     final listPadding =
