@@ -45,6 +45,8 @@ const _defaultErrorStyle = TextStyle(
   height: 0.5,
 );
 
+// Widget _passthru(Widget w, String? error) => w;
+
 class CustomDropdown<T> extends StatefulWidget {
   /// The list of items user can select.
   final List<T>? items;
@@ -175,6 +177,8 @@ class CustomDropdown<T> extends StatefulWidget {
   /// If both [visibility] and [overlayController] are provided, this callback never listens the changes of [overlayController].
   /// You have to explicitly check for [overlayController] visibility states using [overlayController.isShowing] property.
   final Function(bool)? visibility;
+  
+  final Function(Widget, String?)? wrapFn;
 
   final _SearchType? _searchType;
 
@@ -192,6 +196,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.validator,
     this.validateOnChange = true,
     this.visibility,
+    this.wrapFn,
     this.overlayController,
     this.listItemBuilder,
     this.headerBuilder,
@@ -246,6 +251,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.hintText,
     this.decoration,
     this.visibility,
+    this.wrapFn,
     this.overlayController,
     this.searchHintText,
     this.noResultFoundText,
@@ -304,6 +310,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.hintText,
     this.decoration,
     this.visibility,
+    this.wrapFn,
     this.overlayController,
     this.searchHintText,
     this.noResultFoundText,
@@ -349,6 +356,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.itemsScrollController,
     this.listValidator,
     this.visibility,
+    this.wrapFn,
     this.headerListBuilder,
     this.hintText,
     this.decoration,
@@ -404,6 +412,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.initialItems,
     this.controller,
     this.visibility,
+    this.wrapFn,
     this.itemsScrollController,
     this.overlayController,
     this.listValidator,
@@ -466,6 +475,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.itemsScrollController,
     this.overlayController,
     this.visibility,
+    this.wrapFn,
     this.hintText,
     this.decoration,
     this.searchHintText,
@@ -626,8 +636,8 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
         },
         builder: (formFieldState) {
           _formFieldState = formFieldState;
-          final customErrorPadding =
-              formFieldState.hasError && null != decoration?.errorPadding;
+          final customErrorPadding = null != widget.wrapFn ||
+              (formFieldState.hasError && null != decoration?.errorPadding);
           final w = InputDecorator(
             decoration: InputDecoration(
               errorStyle: decoration?.errorStyle ?? _defaultErrorStyle,
@@ -753,6 +763,9 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               },
             ),
           );
+          if (null != widget.wrapFn) {
+            return widget.wrapFn!(w, formFieldState.errorText);
+          }
           return !customErrorPadding ? w : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
