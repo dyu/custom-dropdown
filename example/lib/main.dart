@@ -1,5 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart'
-    show OverlayPortalController;
+    show OverlayPortalController, SingleSelectController;
 import 'package:animated_custom_dropdown_example/widgets/controller_validation_dropdown.dart';
 import 'package:animated_custom_dropdown_example/widgets/multi_select_controller_dropdown.dart';
 import 'package:animated_custom_dropdown_example/widgets/decorated_dropdown.dart';
@@ -35,6 +35,12 @@ class App extends StatelessWidget {
   }
 }
 
+String? validateRequired(String? value) {
+  return value == null || value.isEmpty
+      ? 'Required'
+      : null;
+}
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -53,6 +59,19 @@ class _HomeState extends State<Home> {
     overlayController: OverlayPortalController(false),
     visibility: Toggle(false),
   );
+  
+  final _genderFormKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final genderInput = FocusableDropdownInput<String>(
+    hintText: 'Gender',
+    validator: validateRequired,
+    visibility: Toggle(false),
+    overlayController: OverlayPortalController(false),
+    controller: SingleSelectController<String>(null),
+    items: ['Male', 'Female'],
+    toggleFocus: Toggle(false),
+  );
+  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -96,11 +115,42 @@ class _HomeState extends State<Home> {
                 const SizedBox(height: 16),
                 const SimpleDropdown(),
                 const SizedBox(height: 16),
+                Form(
+                  key: _genderFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        autocorrect: false,
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Name',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Focus(
+                        onFocusChange: genderInput.toggleFocus.update,
+                        child: genderInput,
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _genderFormKey.currentState?.validate();
+                          },
+                          child: const Text(
+                            'Submit',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 const SimpleInitializedDropdown(),
-                const SizedBox(height: 16),
-                const SearchDropdown(),
-                const SizedBox(height: 16),
-                const SearchRequestDropdown(),
                 const SizedBox(height: 16),
                 Form(
                   key: _formKey,
@@ -128,6 +178,10 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                const SearchDropdown(),
+                const SizedBox(height: 16),
+                const SearchRequestDropdown(),
+                const SizedBox(height: 16),
                 const DecoratedDropdown(),
                 const SizedBox(height: 16),
                 ValidationDropdown(),
@@ -137,7 +191,6 @@ class _HomeState extends State<Home> {
                 ValidationPaddedErrorDropdown(),
                 const SizedBox(height: 16),
                 const ControllerValidationDropdown(),
-                const SizedBox(height: 16),
               ],
             ),
             ListView(
