@@ -131,11 +131,13 @@ class _CheckboxRowState extends State<CheckboxRow> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          widget.item.toString(),
-          style: const TextStyle(color: Colors.green, fontSize: 16),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            widget.item.toString(),
+            style: const TextStyle(color: Colors.green, fontSize: 16),
+          ),
         ),
         Checkbox(
           value: selected,

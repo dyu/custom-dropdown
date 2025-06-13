@@ -20,10 +20,12 @@ class StatefulCheckbox extends StatefulWidget {
     required this.isSelected,
     required this.onItemSelect,
     this.decoration,
+    this.toggle,
   });
   final bool isSelected;
   final void Function() onItemSelect;
   final CustomDropdownDecoration? decoration;
+  final ChangeNotifier? toggle;
 
   @override
   State<StatefulCheckbox> createState() => _StatefulCheckboxState();
@@ -36,7 +38,19 @@ class _StatefulCheckboxState extends State<StatefulCheckbox> {
   void initState() {
     super.initState();
     selected = widget.isSelected;
+    widget.toggle?.addListener(onToggle);
   }
+  
+  @override
+  void displose() {
+    widget.toggle?.removeListener(onToggle);
+    super.dispose();
+  }
+  
+  void onToggle() {
+    onChanged(!selected);
+  }
+  
   void onChanged(bool? selected) {
     setState(() {
       this.selected = selected == true;
@@ -57,6 +71,84 @@ class _StatefulCheckboxState extends State<StatefulCheckbox> {
       visualDensity: const VisualDensity(
         horizontal: VisualDensity.minimumDensity,
         vertical: VisualDensity.minimumDensity,
+      ),
+    );
+  }
+}
+
+class StatefulCheckboxRow extends StatefulWidget {
+  const StatefulCheckboxRow({
+    super.key,
+    required this.text,
+    required this.isSelected,
+    required this.onItemSelect,
+    this.decoration,
+  });
+  final Text text;
+  final bool isSelected;
+  final void Function() onItemSelect;
+  final CustomDropdownDecoration? decoration;
+
+  @override
+  State<StatefulCheckboxRow> createState() => _StatefulCheckboxRowState();
+}
+
+class _StatefulCheckboxRowState extends State<StatefulCheckboxRow> {
+  var selected = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    selected = widget.isSelected;
+  }
+  
+  void onToggle() {
+    onChanged(!selected);
+  }
+  
+  void onChanged(bool? selected) {
+    setState(() {
+      this.selected = selected == true;
+      widget.onItemSelect();
+    });
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    final listItemDecoration = widget.decoration?.listItemDecoration;
+    final cb = Checkbox(
+      onChanged: onChanged,
+      value: selected,
+      activeColor: listItemDecoration?.selectedIconColor,
+      side: listItemDecoration?.selectedIconBorder,
+      shape: listItemDecoration?.selectedIconShape,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: const VisualDensity(
+        horizontal: VisualDensity.minimumDensity,
+        vertical: VisualDensity.minimumDensity,
+      ),
+    );
+    return Container(
+      padding: listItemDecoration?.multiSelectPadding ??
+          ListItemDecoration._defaultMultiSelectPadding,
+      color: !selected
+          ? null
+          : listItemDecoration?.selectedColor ??
+              ListItemDecoration._defaultSelectedColor,
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onToggle,
+              child: widget.text,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 12.0),
+            child: cb,
+          ),
+        ],
       ),
     );
   }
@@ -171,42 +263,50 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
     bool isSelected,
     VoidCallback onItemSelect,
   ) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            result.toString(),
-            maxLines: widget.maxLines,
-            overflow: TextOverflow.ellipsis,
-            style: widget.listItemStyle ?? const TextStyle(fontSize: 16),
+    final text = Text(
+      result.toString(),
+      maxLines: widget.maxLines,
+      overflow: TextOverflow.ellipsis,
+      style: widget.listItemStyle ?? const TextStyle(fontSize: 16),
+    );
+    if (widget.dropdownType != _DropdownType.multipleSelect) return text;
+    
+    return StatefulCheckboxRow(
+      text: text,
+      isSelected: isSelected,
+      onItemSelect: onItemSelect,
+      decoration: widget.decoration,
+    );
+    /*
+    final scb = StatefulCheckbox(
+      isSelected: isSelected,
+      onItemSelect: onItemSelect,
+      decoration: widget.decoration,
+      toggle: ChangeNotifier(),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        bottom: 14.0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: scb.toggle!.notifyListeners,
+              child: text,
+            ),
           ),
-        ),
-        if (widget.dropdownType == _DropdownType.multipleSelect)
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 12.0),
-            /*
-            child: Checkbox(
-              onChanged: (_) => onItemSelect(),
-              value: isSelected,
-              activeColor:
-                  widget.decoration?.listItemDecoration?.selectedIconColor,
-              side: widget.decoration?.listItemDecoration?.selectedIconBorder,
-              shape: widget.decoration?.listItemDecoration?.selectedIconShape,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: const VisualDensity(
-                horizontal: VisualDensity.minimumDensity,
-                vertical: VisualDensity.minimumDensity,
-              ),
-            ),
-            */
-            child: StatefulCheckbox(
-              isSelected: isSelected,
-              onItemSelect: onItemSelect,
-              decoration: widget.decoration,
-            ),
+            child: scb,
           ),
-      ],
+        ],
+      ),
     );
+    */
   }
 
   Widget defaultHeaderBuilder(BuildContext context, {T? item, List<T>? items}) {

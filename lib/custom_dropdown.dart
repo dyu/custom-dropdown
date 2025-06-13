@@ -669,13 +669,31 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                       selectedItemNotifier.value = value;
                       return;
                     }
-                    final currentVal = selectedItemsNotifier.value.toList();
+                    final prevVal = selectedItemsNotifier.value;
+                    /*
+                    final currentVal = prevVal.toList();
                     if (currentVal.contains(value)) {
                       currentVal.remove(value);
                     } else {
                       currentVal.add(value);
                     }
                     selectedItemsNotifier.value = currentVal;
+                    */
+                    int idx = 0;
+                    if (prevVal.isEmpty) {
+                      // add
+                      selectedItemsNotifier.value = [value];
+                    } else if (value == prevVal[0]) {
+                      // remove
+                      selectedItemsNotifier.value = prevVal.sublist(1);
+                    } else if (1 == prevVal.length ||
+                        -1 == (idx = prevVal.indexOf(value, 1))) {
+                      // add
+                      selectedItemsNotifier.value = [...prevVal, value];
+                    } else {
+                      // remove
+                      selectedItemsNotifier.value = (prevVal.sublist(0)..removeAt(idx));
+                    }
                   },
                   noResultFoundText:
                       widget.noResultFoundText ?? 'No result found.',

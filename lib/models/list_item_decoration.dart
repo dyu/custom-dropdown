@@ -27,6 +27,8 @@ class ListItemDecoration {
   /// Selected icon shape for [CustomDropdown] list item area.
   /// Useless if [listItemBuilder] provided.
   final OutlinedBorder? selectedIconShape;
+  
+  final EdgeInsetsGeometry? multiSelectPadding;
 
   const ListItemDecoration({
     this.splashColor,
@@ -35,9 +37,14 @@ class ListItemDecoration {
     this.selectedIconColor,
     this.selectedIconBorder,
     this.selectedIconShape,
+    this.multiSelectPadding,
   });
 
   static const _defaultSplashColor = Colors.transparent;
   static const _defaultHighlightColor = Color(0xFFEEEEEE);
   static const _defaultSelectedColor = Color(0xFFF5F5F5);
+  static const _defaultMultiSelectPadding = EdgeInsets.symmetric(
+    horizontal: 16.0,
+    vertical: 9.0,
+  );
 }
